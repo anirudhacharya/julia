@@ -3125,9 +3125,8 @@ function inlineable(f::ANY, ft::ANY, e::Expr, atypes::Vector{Any}, sv::Inference
     else
         invoke_data = invoke_data::InvokeData
         method = invoke_data.entry.func
-        (metharg, methsp) = ccall(:jl_match_method, Ref{SimpleVector},
-                                  (Any, Any, Any),
-                                  atype_unlimited, method.sig, method.tvars)
+        (metharg, methsp) = ccall(:jl_match_method, Ref{SimpleVector}, (Any, Any),
+                                  atype_unlimited, method.sig)
         methsp = methsp::SimpleVector
     end
     # check whether call can be inlined to just a quoted constant value
