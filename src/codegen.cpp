@@ -962,11 +962,11 @@ jl_llvm_functions_t jl_compile_linfo(jl_method_instance_t **pli, jl_code_info_t 
         bool toplevel = li->def == NULL;
         if (!toplevel) {
             const DataLayout &DL =
-    #if JL_LLVM_VERSION >= 30500
+#if JL_LLVM_VERSION >= 30500
                 m->getDataLayout();
-    #else
+#else
                 *jl_data_layout;
-    #endif
+#endif
             // but don't remember toplevel thunks because
             // they may not be rooted in the gc for the life of the program,
             // and the runtime doesn't notify us when the code becomes unreachable :(
@@ -4420,14 +4420,14 @@ static std::unique_ptr<Module> emit_function(
 
     if (ctx.debug_enabled) {
         // TODO: Fix when moving to new LLVM version
-        #if JL_LLVM_VERSION < 30400
+#if JL_LLVM_VERSION < 30400
         dbuilder.createCompileUnit(0x01, filename, ".", "julia", true, "", 0);
-        #elif JL_LLVM_VERSION >= 30700
+#elif JL_LLVM_VERSION >= 30700
         DICompileUnit *CU = dbuilder.createCompileUnit(0x01, filename, ".", "julia", true, "", 0);
-        #else
+#else
         DICompileUnit CU = dbuilder.createCompileUnit(0x01, filename, ".", "julia", true, "", 0);
         assert(CU.Verify());
-        #endif
+#endif
 
 #if JL_LLVM_VERSION >= 30700
         DISubroutineType *subrty;
@@ -4464,11 +4464,11 @@ static std::unique_ptr<Module> emit_function(
         }
 
         topfile = dbuilder.createFile(filename, ".");
-        #if JL_LLVM_VERSION < 30400
+#if JL_LLVM_VERSION < 30400
         SP = dbuilder.createFunction((DIDescriptor)dbuilder.getCU(),
-        #else
+#else
         SP = dbuilder.createFunction(CU,
-        #endif
+#endif
                                     dbgFuncName,      // Name
                                     f->getName(),     // LinkageName
                                     topfile,          // File
@@ -4479,18 +4479,18 @@ static std::unique_ptr<Module> emit_function(
                                     0,                // ScopeLine
                                     DIFlagZero,       // Flags
                                     true,             // isOptimized
-        #if JL_LLVM_VERSION >= 30800
+#if JL_LLVM_VERSION >= 30800
                                     nullptr);         // Template Parameters
-        #else
+#else
                                     f);               // Function
-        #endif
+#endif
         topdebugloc = DebugLoc::get(toplineno, 0, SP, NULL);
-        #if JL_LLVM_VERSION >= 30800
+#if JL_LLVM_VERSION >= 30800
         f->setSubprogram(SP);
-        #endif
-        #if JL_LLVM_VERSION < 30700
+#endif
+#if JL_LLVM_VERSION < 30700
         assert(SP.Verify() && SP.describes(f) && SP.getFunction() == f);
-        #endif
+#endif
     }
     builder.SetCurrentDebugLocation(noDbg);
 
